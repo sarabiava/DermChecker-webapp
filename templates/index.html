@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DermChecker</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div id="app">
+        <h1>Benvenuto su DermChecker</h1>
+        <p id="description">Analizza un'immagine e ricevi subito il risultato.</p>
+
+        <input type="file" id="file-input" accept="image/*">
+        <label for="file-input" id="file-label">Scegli un'immagine</label>
+
+        <div id="image">
+            <img id="uploaded-image" alt="Uploaded Image" style="display:none;">
+        </div>
+        
+        <button id="analyze-button" onclick="analyzeImage()">Analizza</button>
+
+        <div id="results"></div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
