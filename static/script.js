@@ -6,12 +6,14 @@ document.getElementById('file-input').addEventListener('change', function(event)
     displayUploadedImage(event.target.files[0]);
 });
 
+const BASE_URL = 'https://ie4ole2vxvfphgbu4nhycgpaly0ylrrp.lambda-url.eu-north-1.on.aws'
+
 async function analyzeImage() {
     const formData = new FormData();
     const fileField = document.querySelector('input[type="file"]');
     formData.append('file', fileField.files[0]);
 
-    const response = await fetch('http://localhost:8000/analyze', {
+    const response = await fetch(BASE_URL + '/analyze', {
         method: 'POST',
         body: formData
     });
@@ -29,7 +31,7 @@ async function analyzeImage() {
 
 // ['MEL', 'NV', 'BCC', 'AKIEC', 'BKL', 'DF', 'VASC', 'OTHER']
 async function fetchResults(inferenceId) {
-    const response = await fetch(`http://localhost:8000/result/${inferenceId}`);
+    const response = await fetch(BASE_URL + `/result/${inferenceId}`);
     const result = await response.json();
 
     const maxProbability = Math.max(...result.probabilities);
