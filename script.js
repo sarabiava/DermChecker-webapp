@@ -4,13 +4,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.getElementById('file-input').addEventListener('change', function(event) {
     displayUploadedImage(event.target.files[0]);
+
+    document.getElementById('error-message').style.display = 'none';
+    document.getElementById('analyze-button').style.display = 'block';
+
+    // Svuota i risultati
+    clearResults();
 });
 
 const BASE_URL = 'https://ie4ole2vxvfphgbu4nhycgpaly0ylrrp.lambda-url.eu-north-1.on.aws'
 
 async function analyzeImage() {
-    const formData = new FormData();
+
     const fileField = document.querySelector('input[type="file"]');
+    
+    // Controlla se un file è stato selezionato
+    if (fileField.files.length === 0) {
+        document.getElementById('error-message').style.display = 'block';
+        return;
+    }
+    document.getElementById('error-message').style.display = 'none';
+
+    document.getElementById('loading').style.display = 'block';
+
+    const formData = new FormData();
     formData.append('file', fileField.files[0]);
 
     const response = await fetch(BASE_URL + '/analyze', {
@@ -56,6 +73,8 @@ async function fetchResults(inferenceId) {
         htmlContent += `<p>Risultato binario: ${result_binary}</p>`;
     }
 
+    document.getElementById('loading').style.display = 'none';
+
     // Mostra i risultati
     const resultsContainer = document.getElementById('results');
     resultsContainer.innerHTML = htmlContent;
@@ -93,62 +112,7 @@ function displayUploadedImage(file) {
     reader.readAsDataURL(file);
 }
 
-/*
-async function analyzeImage() {
-    const formData = new FormData();
-    const fileField = document.querySelector('input[type="file"]');
-    formData.append('file', fileField.files[0]);
-
-    const response = await fetch('http://localhost:8000/analyze', {
-        method: 'POST',
-        body: formData
-    });
-
-    const result = await response.json();
-    const inferenceId = result.inference_id;
-    console.log("Inference ID:", inferenceId);
-
-    // Redirect to result page with the inference ID
-    window.location.href = `http://localhost:8000/result/${inferenceId}`;
+function clearResults() {
+    const resultsContainer = document.getElementById('results');
+    resultsContainer.innerHTML = '';
 }
-
-async function uploadImage() {
-    const input = document.getElementById('file-input');
-    const file = input.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-        const response = await fetch('http://localhost:8000/analyze', {
-            method: 'POST',
-            body: formData
-        });
-        const data = await response.json();
-        const inferenceId = data.inference_id;
-
-        const fetchResult = async () => {
-            try {
-                const resultResponse = await fetch(`http://localhost:8000/result/${inferenceId}`);
-                const resultData = await resultResponse.json();
-                
-
-                if (resultData.predicted_class !== undefined) {
-                    document.getElementById('result-multiclass').innerText = `Predicted Multiclass: ${resultData.predicted_multiclass}`;
-                    document.getElementById('result-probabilities').innerText = `Probabilities: ${resultData.probabilities.join(', ')}`;
-                    document.getElementById('result-binary').innerText = `Predicted Binary: ${resultData.predicted_binary}`;
-                } else {
-                    // Result not ready yet, continue polling
-                    setTimeout(fetchResult, 1000);
-                }
-            } catch (error) {
-                console.error('Error fetching result:', error);
-            }
-        };
-
-        fetchResult();
-
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-*/
