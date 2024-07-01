@@ -16,6 +16,8 @@ const BASE_URL = 'https://ie4ole2vxvfphgbu4nhycgpaly0ylrrp.lambda-url.eu-north-1
 
 async function analyzeImage() {
 
+    clearResults();
+
     const fileField = document.querySelector('input[type="file"]');
     
     // Controlla se un file è stato selezionato

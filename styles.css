@@ -68,6 +68,7 @@ img {
     background-color: #9f63af;
 }
 
+/*
 #loading {
     position: fixed;
     display: flex;
@@ -88,10 +89,21 @@ img {
 }
 
 #loading-text {
-    margin-top: 20px;
+    margin-top: 5px;
     font-size: 1.2em;
     color: #000;
     z-index: 100;
+}
+*/
+
+#loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#loading-text {
+    margin-top: 5px;
 }
 
 #error-message {
