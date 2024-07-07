@@ -48,7 +48,6 @@ async function analyzeImage() {
     displayUploadedImage(fileField.files[0]);
 }
 
-const CLASS_NAMES = ['MEL', 'NV', 'BCC', 'AKIEC', 'BKL', 'DF', 'VASC', 'OTHER'];
 // ['MEL', 'NV', 'BCC', 'AKIEC', 'BKL', 'DF', 'VASC', 'OTHER']
 async function fetchResults(inferenceId) {
     const response = await fetch(BASE_URL + `/result/${inferenceId}`);
@@ -57,45 +56,34 @@ async function fetchResults(inferenceId) {
     const probabilities = result.probabilities;
     const sortedProbabilities = [...probabilities].map((prob, index) => ({ prob, index }))
         .sort((a, b) => b.prob - a.prob)
-        .slice(0, 3);
-
+        .slice(0, 3)
+        .filter(item => item.prob > 0);
 
     let topResults = sortedProbabilities.map(item => ({
-        className: CLASS_NAMES[item.index],
+        className: getClassLabel(item.index),
         probability: (item.prob * 100).toFixed(0)
     }));
 
-    //const maxProbability = Math.max(...result.probabilities);
-    //const maxProbabilityPercent = (maxProbability * 100).toFixed(0);
-
-    let result_multiclass = getClassLabel(result.predicted_multiclass);
     let result_binary = "";
-    if(result.predicted_binary = 0) {
-        result_binary = "Benign"
-    } else if(result.predicted_binary = 1) {
-        result_binary = "Malignant"
+    if(result.predicted_binary === 0) {
+        result_binary = "La lesione risulta essere classificata come <strong>benigna</strong>."
+    } else if(result.predicted_binary === 1) {
+        result_binary = "La lesione risulta essere classificata come <strong>maligna</strong>."
     } else {
         result_binary = "Classe sconosciuta"
     }
 
-    /*
     let htmlContent = `
-        <h2>Risultati</h2>
-        <p>Risultato multiclasse: ${result_multiclass}</p>
-        <p>Probabilità: ${maxProbabilityPercent}%</p>
-    `;
-    */
-    let htmlContent = `
-        <h2>Risultati</h2>
-        <p>Probabilità dei 3 risultati principali:</p>
-        <ul style="list-style-position: inside; display: inline-block; text-align: left;">
+        <h2>Risultato dell'analisi</h2>
+        <p>L'analisi dell'immagine ha ottenuto come risultati più probabili:</p>
+        <ul>
     `;
     topResults.forEach(result => {
-        htmlContent += `<li>${result.className}: ${result.probability}%</li>`;
+        htmlContent += `<li><strong>${result.className}</strong>: ${result.probability}%</li>`;
     });
     htmlContent += `</ul>`;
     if (result.predicted_multiclass !== 7) {
-        htmlContent += `<p>Risultato binario: ${result_binary}</p>`;
+        htmlContent += `<p>${result_binary}</p>`;
     }
 
     document.getElementById('loading').style.display = 'none';
