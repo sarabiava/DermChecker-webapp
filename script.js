@@ -53,6 +53,23 @@ async function fetchResults(inferenceId) {
     const response = await fetch(BASE_URL + `/result/${inferenceId}`);
     const result = await response.json();
 
+    if (!result.probabilities_multi) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('results').innerHTML = '<p>Risultati non disponibili al momento. Riprova più tardi.</p>';
+        return;
+    }
+
+    const probabilitiesMulti = result.probabilities_multi.map(parseFloat);
+    const sortedProbabilitiesMulti = probabilitiesMulti.map((prob, index) => ({ prob, index }))
+        .sort((a, b) => b.prob - a.prob)
+        .slice(0, 3)
+        .filter(item => item.prob > 0);
+
+    let topResults = sortedProbabilitiesMulti.map(item => ({
+        className: getClassLabel(item.index),
+        probability: (item.prob * 100).toFixed(0)
+    }));
+    /*
     const probabilities = result.probabilities;
     const sortedProbabilities = [...probabilities].map((prob, index) => ({ prob, index }))
         .sort((a, b) => b.prob - a.prob)
@@ -63,7 +80,20 @@ async function fetchResults(inferenceId) {
         className: getClassLabel(item.index),
         probability: (item.prob * 100).toFixed(0)
     }));
+    */
 
+    const probabilitiesBinary = result.probabilities_binary.map(parseFloat);
+    const maxBinaryProb = Math.max(...probabilitiesBinary);
+    let result_binary = "";
+    if (result.predicted_binary === 0) {
+        result_binary = "La lesione risulta essere classificata come <strong>benigna</strong>";
+    } else if (result.predicted_binary === 1) {
+        result_binary = "La lesione risulta essere classificata come <strong>maligna</strong>";
+    } else {
+        result_binary = "Classe sconosciuta";
+    }
+
+    /*
     let result_binary = "";
     if(result.predicted_binary === 0) {
         result_binary = "La lesione risulta essere classificata come <strong>benigna</strong>."
@@ -72,6 +102,7 @@ async function fetchResults(inferenceId) {
     } else {
         result_binary = "Classe sconosciuta"
     }
+    */
 
     let htmlContent = `
         <h2>Risultato dell'analisi</h2>
@@ -83,7 +114,7 @@ async function fetchResults(inferenceId) {
     });
     htmlContent += `</ul>`;
     if (result.predicted_multiclass !== 7) {
-        htmlContent += `<p>${result_binary}</p>`;
+        htmlContent += `<p>${result_binary} al ${(maxBinaryProb * 100).toFixed(0)}%.</p>`;
     }
 
     document.getElementById('loading').style.display = 'none';
