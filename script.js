@@ -12,7 +12,8 @@ document.getElementById('file-input').addEventListener('change', function(event)
     clearResults();
 });
 
-const BASE_URL = 'https://ie4ole2vxvfphgbu4nhycgpaly0ylrrp.lambda-url.eu-north-1.on.aws'
+//const BASE_URL = 'https://ie4ole2vxvfphgbu4nhycgpaly0ylrrp.lambda-url.eu-north-1.on.aws'
+const BASE_URL = 'http://16.171.129.212'
 
 async function analyzeImage() {
 
