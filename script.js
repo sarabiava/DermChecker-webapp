@@ -15,7 +15,7 @@ document.getElementById('file-input').addEventListener('change', function(event)
 //const BASE_URL = 'https://ie4ole2vxvfphgbu4nhycgpaly0ylrrp.lambda-url.eu-north-1.on.aws'
 //const BASE_URL = 'http://16.171.129.212'
 //const BASE_URL = 'https://3adcsajxxfiqup7rizuwsb2zii0mmcoj.lambda-url.us-east-1.on.aws/'
-const BASE_URL = 'https://rdlvlbl87l.execute-api.us-east-1.amazonaws.com/'
+const BASE_URL = 'https://rdlvlbl87l.execute-api.us-east-1.amazonaws.com'
 
 async function analyzeImage() {
 
